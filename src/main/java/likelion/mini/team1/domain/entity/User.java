@@ -1,5 +1,8 @@
 package likelion.mini.team1.domain.entity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,5 +14,10 @@ import lombok.Data;
 public class User {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
-	String userId;
+	String studentNumber;
+	String password;
+	String name;
+	String major;
+	LocalDateTime createdAt;
+	LocalDateTime updatedAt;
 }
