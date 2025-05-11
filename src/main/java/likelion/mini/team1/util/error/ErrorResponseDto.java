@@ -1,4 +1,4 @@
-package likelion.mini.team1.domain.dto;
+package likelion.mini.team1.util.error;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
