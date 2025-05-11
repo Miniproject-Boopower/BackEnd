@@ -28,3 +28,6 @@ springdoc:
     display-request-duration: true
     use-root-path: true
   override-with-generic-response: false
+
+error:
+  print-stack-trace: true
