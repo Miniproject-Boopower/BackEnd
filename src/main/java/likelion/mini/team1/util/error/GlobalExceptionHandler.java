@@ -1,4 +1,4 @@
-package likelion.mini.team1.domain.dto;
+package likelion.mini.team1.util.error;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
@@ -67,5 +67,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException exception, WebRequest request) {
 		log.error("Access denied", exception);
 		return buildErrorResponse(exception, "Access denied", HttpStatus.FORBIDDEN, request);
+	}
+
+	// 400 Runtime Exception
+	@ExceptionHandler(RuntimeException.class)
+	@Hidden
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<Object> handleRuntimeException(RuntimeException exception, WebRequest request) {
+		log.error("Runtime Exception", exception);
+		return buildErrorResponse(exception, exception.getMessage(), HttpStatus.BAD_REQUEST, request);
 	}
 }
