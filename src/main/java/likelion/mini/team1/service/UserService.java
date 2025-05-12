@@ -1,12 +1,19 @@
 package likelion.mini.team1.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
+import likelion.mini.team1.domain.dto.response.AssignmentResponse;
+import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.domain.entity.User;
+import likelion.mini.team1.domain.entity.UserCourse;
+import likelion.mini.team1.repository.AssignmentRepository;
+import likelion.mini.team1.repository.UserCourseRepository;
 import likelion.mini.team1.repository.UserRepository;
+import likelion.mini.team1.util.AESUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,7 +23,9 @@ public class UserService {
 	@Autowired
 	private final UserRepository userRepository;
 	@Autowired
-	private final PasswordEncoder passwordEncoder;
+	private final UserCourseRepository userCourseRepository;
+	@Autowired
+	private final AssignmentRepository assignmentRepository;
 
 	public void test() {
 		throw new RuntimeException("sad");
@@ -30,8 +39,28 @@ public class UserService {
 			.studentNumber(signUpRequest.getStudentNumber())
 			.name(signUpRequest.getName())
 			.major(signUpRequest.getMajor())
-			.password(passwordEncoder.encode(signUpRequest.getPassword()))
+			.password(AESUtil.encrypt(signUpRequest.getPassword()))
 			.build();
 		userRepository.save(newUser);
+	}
+
+	public List<CourseResponse> getCourse(String studentNum) {
+		User user = userRepository.findByStudentNumber(studentNum).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+		List<UserCourse> courses = userCourseRepository.findAllByUser(user);
+		return courses.stream().map(course -> CourseResponse.builder()
+			.courseType(course.getCourseType())
+			.courseName(course.getCourseName())
+			.importanceLevel(course.getImportanceLevel())
+			.build()).toList();
+	}
+
+	public List<AssignmentResponse> getAssignments(String studentNum) {
+		User user = userRepository.findByStudentNumber(studentNum).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+		return assignmentRepository.findAllByUser(user).stream().map(((assignment) -> AssignmentResponse.builder()
+			.assignmentName(assignment.getTitle())
+			.deadline(assignment.getDeadline())
+			.subjectName(assignment.getUserCourse().getCourseName())
+			.status(assignment.getStatus()).build()
+		)).toList();
 	}
 }
