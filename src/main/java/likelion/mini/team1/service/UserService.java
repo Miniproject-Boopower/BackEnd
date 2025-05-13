@@ -63,4 +63,16 @@ public class UserService {
 			.status(assignment.getStatus()).build()
 		)).toList();
 	}
+
+
+
+
+	public boolean login(String studentNumber, String password) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+
+		String encryptedInputPassword = AESUtil.encrypt(password);
+
+		return user.getPassword().equals(encryptedInputPassword);
+	}
 }

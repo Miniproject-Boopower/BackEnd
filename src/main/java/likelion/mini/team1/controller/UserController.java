@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
+import likelion.mini.team1.domain.dto.request.LoginRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.service.UserService;
@@ -44,6 +45,33 @@ public class UserController {
 
 		return ResponseEntity.ok(response);
 	}
+
+
+
+
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+		boolean success = userService.login(loginRequest.getStudentNumber(), loginRequest.getPassword());
+
+		if (success) {
+			ApiResponse<String> response = ApiResponse.<String>builder()
+				.status(200)
+				.message("로그인 성공!")
+				.data("유저 정보 or 토큰 자리")
+				.build();
+			return ResponseEntity.ok(response);
+		} else {
+			ApiResponse<String> response = ApiResponse.<String>builder()
+				.status(401)
+				.message("로그인 실패. 학번 또는 비밀번호가 올바르지 않습니다.")
+				.data(null)
+				.build();
+			return ResponseEntity.status(401).body(response);
+		}
+	}
+
+
+
 
 	@GetMapping("/course")
 	public ResponseEntity<?> getCourse(@RequestParam String studentNumber) {
