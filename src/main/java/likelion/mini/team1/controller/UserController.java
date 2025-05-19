@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
+import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
 import likelion.mini.team1.domain.dto.request.LoginRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
@@ -47,9 +48,6 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
-
-
-
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 		boolean success = userService.login(loginRequest.getStudentNumber(), loginRequest.getPassword());
@@ -71,9 +69,6 @@ public class UserController {
 		}
 	}
 
-
-
-
 	@GetMapping("/course")
 	public ResponseEntity<?> getCourse(@RequestParam String studentNumber) {
 		List<CourseResponse> course = userService.getCourse(studentNumber);
@@ -92,6 +87,17 @@ public class UserController {
 			.status(200)
 			.message("과제를 가져오는데 성공하였습니다!")
 			.data(assignments)
+			.build();
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/course/non-regular")
+	public ResponseEntity<?> addNonRegularCourse(@RequestBody AddNonRegularCourseRequest addNonRegularCourseRequest) {
+		userService.addNonRegularCourse(addNonRegularCourseRequest);
+		ApiResponse<Void> response = ApiResponse.<Void>builder()
+			.status(200)
+			.message("비정규 과목을 모두 저장하였습니다!!")
+			.data(null)
 			.build();
 		return ResponseEntity.ok(response);
 	}
