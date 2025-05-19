@@ -102,4 +102,16 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/today/assignment")
+	public ResponseEntity<?> getTodayAssignment(@RequestParam String studentNumber) {
+		List<AssignmentResponse> todayAssignment = userService.getTodayAssignment(studentNumber);
+		ApiResponse<List<AssignmentResponse>> response = ApiResponse.<List<AssignmentResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
+			.data(todayAssignment)
+			.build();
+
+		return ResponseEntity.ok(response);
+	}
+
 }

@@ -1,5 +1,7 @@
 package likelion.mini.team1.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +91,22 @@ public class UserService {
 	public User findUserByStudentNumber(String studentNumber) {
 		return userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+	}
+
+	public List<AssignmentResponse> getTodayAssignment(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		LocalDateTime start = LocalDate.now().atStartOfDay();
+		LocalDateTime end = LocalDate.now().atStartOfDay().plusDays(1);
+		return assignmentRepository.findAllByUserAndDeadlineAfterAndDeadlineBefore(
+			user,
+			start,
+			end
+		).stream().map(assignment -> AssignmentResponse.builder()
+			.assignmentName(assignment.getTitle())
+			.subjectName(assignment.getUserCourse().getCourseName())
+			.deadline(assignment.getDeadline())
+			.status(assignment.getStatus())
+			.build()).toList();
 	}
 }
 
