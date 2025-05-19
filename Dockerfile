@@ -6,8 +6,6 @@ RUN apt-get update && \
     apt-get install -y python3 python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
-COPY crawl /app/crawl
-
 # 작업 디렉토리 설정
 WORKDIR /app
 
