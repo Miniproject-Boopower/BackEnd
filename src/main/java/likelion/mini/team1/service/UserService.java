@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.domain.entity.User;
 import likelion.mini.team1.domain.entity.UserCourse;
+import likelion.mini.team1.domain.enums.CourseType;
 import likelion.mini.team1.repository.AssignmentRepository;
 import likelion.mini.team1.repository.UserCourseRepository;
 import likelion.mini.team1.repository.UserRepository;
@@ -63,4 +65,30 @@ public class UserService {
 			.status(assignment.getStatus()).build()
 		)).toList();
 	}
+
+	public boolean login(String studentNumber, String password) {
+		User user = findUserByStudentNumber(studentNumber);
+
+		String encryptedInputPassword = AESUtil.encrypt(password);
+
+		return user.getPassword().equals(encryptedInputPassword);
+	}
+
+	public void addNonRegularCourse(AddNonRegularCourseRequest addNonRegularCourseRequest) {
+		User user = findUserByStudentNumber(addNonRegularCourseRequest.getStudentNumber());
+		for (String courseName : addNonRegularCourseRequest.getCourseName()) {
+			UserCourse newUserCourse = UserCourse.builder()
+				.courseType(CourseType.NON_REGULAR)
+				.user(user)
+				.courseName(courseName)
+				.build();
+			userCourseRepository.save(newUserCourse);
+		}
+	}
+
+	public User findUserByStudentNumber(String studentNumber) {
+		return userRepository.findByStudentNumber(studentNumber)
+			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+	}
 }
+

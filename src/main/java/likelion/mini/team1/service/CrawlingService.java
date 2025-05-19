@@ -132,8 +132,8 @@ public class CrawlingService {
 
 		String decryptedPassword = AESUtil.decrypt(user.getPassword());
 
-		String pythonPath = "venv/bin/python";
-		String scriptPath = "crawl/crawl_course.py";
+		String pythonPath = "python3";
+		String scriptPath = "/app/crawl/crawl_course.py";
 
 		ProcessBuilder processBuilder = new ProcessBuilder(pythonPath, scriptPath, studentNum, decryptedPassword);
 
