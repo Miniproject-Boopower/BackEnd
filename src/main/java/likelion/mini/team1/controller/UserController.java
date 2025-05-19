@@ -33,7 +33,7 @@ public class UserController {
 	@GetMapping("/test")
 	public String testAPI() {
 		// userService.test();
-		return "test API 입니다1234";
+		return "test API 입니다12341";
 	}
 
 	@PostMapping("/sign-up")
