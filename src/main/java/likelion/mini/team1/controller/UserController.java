@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import likelion.mini.team1.domain.dto.ApiResponse;
 import likelion.mini.team1.domain.dto.request.LoginRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
+import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class UserController {
 
 	@GetMapping("/test")
 	public String testAPI() {
-		userService.test();
+		// userService.test();
 		return "test API 입니다";
 	}
 
@@ -76,12 +77,23 @@ public class UserController {
 	@GetMapping("/course")
 	public ResponseEntity<?> getCourse(@RequestParam String studentNumber) {
 		List<CourseResponse> course = userService.getCourse(studentNumber);
-		return ResponseEntity.ok(course);
+		ApiResponse<List<CourseResponse>> response = ApiResponse.<List<CourseResponse>>builder()
+			.status(200)
+			.message("과목을 가져오는데 성공하였습니다!")
+			.data(course)
+			.build();
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/assignment")
 	public ResponseEntity<?> getAssignment(@RequestParam String studentNumber) {
-		return ResponseEntity.ok(userService.getAssignments(studentNumber));
+		List<AssignmentResponse> assignments = userService.getAssignments(studentNumber);
+		ApiResponse<List<AssignmentResponse>> response = ApiResponse.<List<AssignmentResponse>>builder()
+			.status(200)
+			.message("과제를 가져오는데 성공하였습니다!")
+			.data(assignments)
+			.build();
+		return ResponseEntity.ok(response);
 	}
 
 }
