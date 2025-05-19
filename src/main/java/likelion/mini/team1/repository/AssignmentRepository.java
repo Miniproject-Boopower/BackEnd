@@ -11,5 +11,8 @@ import likelion.mini.team1.domain.entity.User;
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 	List<Assignment> findAllByUser(User user);
 
-	List<Assignment> findAllByUserAndDeadlineAfterAndDeadlineBefore(User user, LocalDateTime startDate, LocalDateTime endDate);
+	List<Assignment> findAllByUserAndDeadlineAfterAndDeadlineBefore(User user, LocalDateTime startDate,
+		LocalDateTime endDate);
+
+	List<Assignment> findAllByUserAndDeadlineAfter(User user, LocalDateTime dateTime);
 }

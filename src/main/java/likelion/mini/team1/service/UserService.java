@@ -2,6 +2,7 @@ package likelion.mini.team1.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
+import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
+import likelion.mini.team1.domain.entity.Assignment;
 import likelion.mini.team1.domain.entity.User;
 import likelion.mini.team1.domain.entity.UserCourse;
 import likelion.mini.team1.domain.enums.CourseType;
@@ -107,6 +110,19 @@ public class UserService {
 			.deadline(assignment.getDeadline())
 			.status(assignment.getStatus())
 			.build()).toList();
+	}
+
+	public List<AssignmentDdayResponse> getAssignmentDday(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		List<Assignment> allByUserAndDeadlineAfter = assignmentRepository.findAllByUserAndDeadlineAfter(user,
+			LocalDate.now().atStartOfDay());
+		List<AssignmentDdayResponse> list = allByUserAndDeadlineAfter.stream().map(assignment -> {
+			long between = ChronoUnit.DAYS.between(LocalDate.now(), assignment.getDeadline().toLocalDate());
+			return AssignmentDdayResponse.builder()
+				.assignmentName(assignment.getTitle())
+				.leftDay("D-" + between).build();
+		}).toList();
+		return list;
 	}
 }
 
