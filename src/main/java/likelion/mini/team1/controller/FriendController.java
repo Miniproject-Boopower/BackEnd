@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import likelion.mini.team1.domain.dto.ApiResponse;
 import likelion.mini.team1.domain.dto.request.AddFriendRequest;
 import likelion.mini.team1.domain.dto.request.BestFriendRequest;
+import likelion.mini.team1.domain.dto.request.FriendDeleteRequest;
 import likelion.mini.team1.domain.dto.request.FriendRelationRequest;
 import likelion.mini.team1.domain.dto.request.StudentNumberRequest;
 import likelion.mini.team1.domain.dto.response.FriendResponse;
@@ -106,6 +107,21 @@ public class FriendController {
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(404)
 				.body(new ApiResponse(404, e.getMessage(), null));
+		}
+	}
+
+	@PostMapping("/delete")
+	public ResponseEntity<ApiResponse> deleteFriend(@RequestBody FriendDeleteRequest request) {
+		try {
+			friendService.deleteFriend(request);
+			return ResponseEntity.ok(new ApiResponse(200, "친구 삭제가 완료되었습니다.", null));
+		} catch (RuntimeException e) {
+			String message = e.getMessage();
+			int status = 400;
+			if (message.equals("삭제할 친구가 존재하지 않습니다.") || message.contains("가입한 사용자가")) {
+				status = 404;
+			}
+			return ResponseEntity.status(status).body(new ApiResponse(status, message, null));
 		}
 	}
 
