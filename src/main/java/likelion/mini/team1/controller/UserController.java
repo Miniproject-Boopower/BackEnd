@@ -101,5 +101,10 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/activity1")
+	public ResponseEntity<?> activity1(@RequestParam String studentNumber) {
+		return ResponseEntity.ok(userService.getFirstSemesterActivities(studentNumber));
+	}
+
 
 }
