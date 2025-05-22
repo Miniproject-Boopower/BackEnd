@@ -45,8 +45,8 @@ public class CrawlingService {
 
 		String decryptedPassword = AESUtil.decrypt(user.getPassword());
 
-		String pythonPath = "venv/bin/python";
-		String scriptPath = "crawl/crawl_all.py";
+		String pythonPath = "/app/venv/bin/python";
+		String scriptPath = "/app/crawl/crawl_all.py";
 
 		ProcessBuilder processBuilder = new ProcessBuilder(pythonPath, scriptPath, studentNum, decryptedPassword);
 		processBuilder.redirectErrorStream(true);
@@ -58,19 +58,26 @@ public class CrawlingService {
 		String line;
 		while ((line = reader.readLine()) != null) {
 			System.out.println("[PYTHON] " + line);
-			output.append(line);
+			output.append(line).append("\n");
 		}
 
 		int exitCode = process.waitFor();
 		System.out.println("Python script exited with code: " + exitCode);
 
+		String result = output.toString().trim();
+
+		if (!result.startsWith("{") && !result.startsWith("[")) {
+			// 파싱 불가능한 결과인 경우 예외 출력 후 종료
+			System.err.println("⚠️ Python Error Output:\n" + result);
+			throw new RuntimeException("Python script did not return valid JSON.\n" + result);
+		}
+
 		// JSON 파싱
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		List<Map<String, String>> assignmentList = objectMapper.readValue(
-			output.toString(),
-			new TypeReference<>() {
-			}
+			result,
+			new TypeReference<>() {}
 		);
 
 		for (Map<String, String> assignment : assignmentList) {
@@ -86,15 +93,16 @@ public class CrawlingService {
 						.user(user)
 						.courseName(subject)
 						.build();
-					return userCourseRepository.save(newUserCourse);  // ⭐ 저장 후 반환
+					return userCourseRepository.save(newUserCourse);
 				});
 
 			Assignment newAssignment = Assignment.builder()
 				.title(title)
-				.status(status.equals("미제출") ? AssignmentStatus.NOT_YET : AssignmentStatus.SUBMIT)
+				.status("미제출".equals(status) ? AssignmentStatus.NOT_YET : AssignmentStatus.SUBMIT)
 				.deadline(parseDeadline(deadline))
 				.user(user)
-				.userCourse(userCourse).build();
+				.userCourse(userCourse)
+				.build();
 
 			assignmentRepository.save(newAssignment);
 		}
@@ -132,8 +140,8 @@ public class CrawlingService {
 
 		String decryptedPassword = AESUtil.decrypt(user.getPassword());
 
-		String pythonPath = "venv/bin/python";
-		String scriptPath = "crawl/crawl_course.py";
+		String pythonPath = "/app/venv/bin/python";
+		String scriptPath = "/app/crawl/crawl_course.py";
 
 		ProcessBuilder processBuilder = new ProcessBuilder(pythonPath, scriptPath, studentNum, decryptedPassword);
 
