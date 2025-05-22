@@ -73,4 +73,24 @@ public class FriendService {
 			friendRepository.save(existingFriend);
 		}
 	}
+
+	@Transactional
+	public void unregisterBestFriend(BestFriendRequest request) {
+		User user = userRepository.findByStudentNumber(request.getStudentNumber())
+			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+
+		User friendUser = userRepository.findByStudentNumber(request.getFriendStudentNumber())
+			.orElseThrow(() -> new RuntimeException("친구 정보가 존재하지 않습니다."));
+
+		Friend existingFriend = friendRepository.findByUserAndFriend(user, friendUser)
+			.orElseThrow(() -> new RuntimeException("짱친 정보가 존재하지 않습니다."));
+
+		if (!existingFriend.isFavorite()) {
+			throw new RuntimeException("짱친으로 등록된 친구가 아닙니다.");
+		}
+
+		existingFriend.setFavorite(false);
+		friendRepository.save(existingFriend);
+	}
+
 }
