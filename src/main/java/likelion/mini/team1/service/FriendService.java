@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import likelion.mini.team1.domain.dto.request.AddFriendRequest;
+import likelion.mini.team1.domain.dto.request.FriendRelationRequest;
 import lombok.RequiredArgsConstructor;
 import likelion.mini.team1.domain.dto.request.BestFriendRequest;
 import likelion.mini.team1.domain.dto.response.FriendResponse;
@@ -115,4 +116,18 @@ public class FriendService {
 		friendRepository.save(newFriend);
 	}
 
+	@Transactional
+	public void setFriendRelation(FriendRelationRequest request) {
+		User user = userRepository.findByStudentNumber(request.getStudentNumber())
+			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+
+		User friendUser = userRepository.findByStudentNumber(request.getFriendStudentNumber())
+			.orElseThrow(() -> new RuntimeException("친구 정보가 존재하지 않습니다."));
+
+		Friend friend = friendRepository.findByUserAndFriend(user, friendUser)
+			.orElseThrow(() -> new RuntimeException("친구 관계가 존재하지 않습니다."));
+
+		friend.setRelationLevel(request.getRelationLevel());
+		friendRepository.save(friend);
+	}
 }

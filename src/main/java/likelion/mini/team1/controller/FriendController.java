@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import likelion.mini.team1.domain.dto.ApiResponse;
 import likelion.mini.team1.domain.dto.request.AddFriendRequest;
 import likelion.mini.team1.domain.dto.request.BestFriendRequest;
+import likelion.mini.team1.domain.dto.request.FriendRelationRequest;
 import likelion.mini.team1.domain.dto.request.StudentNumberRequest;
 import likelion.mini.team1.domain.dto.response.FriendResponse;
 import likelion.mini.team1.service.FriendService;
@@ -96,4 +97,16 @@ public class FriendController {
 			return ResponseEntity.status(status).body(new ApiResponse<>(status, message, null));
 		}
 	}
+
+	@PostMapping("/relation")
+	public ResponseEntity<ApiResponse> setFriendRelation(@RequestBody FriendRelationRequest request) {
+		try {
+			friendService.setFriendRelation(request);
+			return ResponseEntity.ok(new ApiResponse(200, "친구 구분이 등록되었습니다.", null));
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(404)
+				.body(new ApiResponse(404, e.getMessage(), null));
+		}
+	}
+
 }
