@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import likelion.mini.team1.domain.dto.request.AddFriendRequest;
 import likelion.mini.team1.domain.dto.request.FriendDeleteRequest;
 import likelion.mini.team1.domain.dto.request.FriendRelationRequest;
+import likelion.mini.team1.domain.dto.response.BestFriendCalendarResponse;
+import likelion.mini.team1.repository.AssignmentRepository;
 import lombok.RequiredArgsConstructor;
 import likelion.mini.team1.domain.dto.request.BestFriendRequest;
 import likelion.mini.team1.domain.dto.response.FriendResponse;
@@ -18,6 +20,8 @@ import likelion.mini.team1.domain.entity.Friend;
 import likelion.mini.team1.domain.entity.User;
 import likelion.mini.team1.repository.FriendRepository;
 import likelion.mini.team1.repository.UserRepository;
+import likelion.mini.team1.domain.entity.Assignment;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class FriendService {
 
 	private final FriendRepository friendRepository;
 	private final UserRepository userRepository;
+	private final AssignmentRepository assignmentRepository;
 
 	public List<FriendResponse> getFriendsByStudentNumber(String studentNumber) {
 		User user = userRepository.findByStudentNumber(studentNumber)
@@ -144,5 +149,21 @@ public class FriendService {
 			.orElseThrow(() -> new RuntimeException("삭제할 친구가 존재하지 않습니다."));
 
 		friendRepository.delete(friend);
+	}
+
+	@Transactional(readOnly = true)
+	public List<BestFriendCalendarResponse> getBestFriendSchedule(String studentNumber) {
+		User friendUser = userRepository.findByStudentNumber(studentNumber)
+			.orElseThrow(() -> new RuntimeException("해당 정보로 가입한 사용자가 존재하지 않습니다."));
+
+		List<Assignment> assignments = assignmentRepository.findAllByUser(friendUser);
+
+		return assignments.stream()
+			.map(a -> BestFriendCalendarResponse.builder()
+				.id(a.getId())
+				.type(a.getUserCourse().getCourseType().getDescription())
+				.memo(a.getStatus().toString())
+				.build())
+			.collect(Collectors.toList());
 	}
 }
