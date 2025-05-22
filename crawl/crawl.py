@@ -12,9 +12,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime
+import shutil
+import json
+import tempfile
+import os
 
 chrome_options = Options()
-chrome_options.add_argument("--headless")  # GUI 없이 실행하고 싶으면 이 줄 추가
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+# 👇 고유한 user-data-dir을 임시 폴더로 지정
+user_data_dir = tempfile.mkdtemp()
+chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 driver.get('https://eclass.hufs.ac.kr/ilos/main/main_form.acl')
@@ -242,7 +253,9 @@ for day_text in schedule_days:
         continue
 
 # --- 9. 최종 결과 출력 ---
-print(schedule_infos)
+print(f"[DEBUG] 수집된 과제 수: {len(schedule_infos)}", file=sys.stderr)
+print(json.dumps(schedule_infos, ensure_ascii=False))
 
 # --- 10. 드라이버 종료 ---
 driver.quit()
+shutil.rmtree(user_data_dir, ignore_errors=True)
