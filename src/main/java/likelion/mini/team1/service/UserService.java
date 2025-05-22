@@ -63,4 +63,15 @@ public class UserService {
 			.status(assignment.getStatus()).build()
 		)).toList();
 	}
+
+    public myPageResponse getUser(String studentNum) {
+        User user = userRepository.findByStudentNumber(studentNum).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+        return myPageResponse.builder()
+                .studentNumber(user.getStudentNumber())
+                .name(user.getName())
+                .major(user.getMajor())
+                .minor(user.getMinor())
+                .build();
+    }
+
 }

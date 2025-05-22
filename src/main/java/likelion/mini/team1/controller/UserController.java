@@ -56,4 +56,12 @@ public class UserController {
 		return ResponseEntity.ok(userService.getAssignments(studentNumber));
 	}
 
+    @GetMapping("/myPage")
+    public ResponseEntity<?> myPage(@RequestParam String studentNumber) {
+        return ResponseEntity.ok(userService.getUser(studentNumber));
+    }
+
+
+
+
 }
