@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
+import likelion.mini.team1.domain.dto.request.AddFriendRequest;
 import likelion.mini.team1.domain.dto.request.BestFriendRequest;
 import likelion.mini.team1.domain.dto.request.StudentNumberRequest;
 import likelion.mini.team1.domain.dto.response.FriendResponse;
@@ -77,4 +78,22 @@ public class FriendController {
 		}
 	}
 
+	@PostMapping("/add")
+	public ResponseEntity<ApiResponse<?>> addFriend(@RequestBody AddFriendRequest request) {
+		try {
+			friendService.addFriend(request);
+			return ResponseEntity.ok(new ApiResponse<>(200, "친구 요청이 전송되었습니다.", null));
+		} catch (RuntimeException e) {
+			String message = e.getMessage();
+			int status = 400;
+			if (message.equals("해당 학번의 유저가 존재하지 않습니다.") ||
+				message.equals("해당 정보로 가입한 사용자가 존재하지 않습니다.")) {
+				status = 404;
+			} else if (message.equals("이미 친구로 등록되어 있습니다.")) {
+				status = 409;
+			}
+
+			return ResponseEntity.status(status).body(new ApiResponse<>(status, message, null));
+		}
+	}
 }
