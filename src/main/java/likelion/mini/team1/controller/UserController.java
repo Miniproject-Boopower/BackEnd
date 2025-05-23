@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
+import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
+import likelion.mini.team1.domain.dto.request.LoginRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
+import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
+import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -45,15 +49,81 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+		boolean success = userService.login(loginRequest.getStudentNumber(), loginRequest.getPassword());
+
+		if (success) {
+			ApiResponse<String> response = ApiResponse.<String>builder()
+				.status(200)
+				.message("로그인 성공!")
+				.data("유저 정보 or 토큰 자리")
+				.build();
+			return ResponseEntity.ok(response);
+		} else {
+			ApiResponse<String> response = ApiResponse.<String>builder()
+				.status(401)
+				.message("로그인 실패. 학번 또는 비밀번호가 올바르지 않습니다.")
+				.data(null)
+				.build();
+			return ResponseEntity.status(401).body(response);
+		}
+	}
+
 	@GetMapping("/course")
 	public ResponseEntity<?> getCourse(@RequestParam String studentNumber) {
 		List<CourseResponse> course = userService.getCourse(studentNumber);
-		return ResponseEntity.ok(course);
+		ApiResponse<List<CourseResponse>> response = ApiResponse.<List<CourseResponse>>builder()
+			.status(200)
+			.message("과목을 가져오는데 성공하였습니다!")
+			.data(course)
+			.build();
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/assignment")
 	public ResponseEntity<?> getAssignment(@RequestParam String studentNumber) {
-		return ResponseEntity.ok(userService.getAssignments(studentNumber));
+		List<AssignmentResponse> assignments = userService.getAssignments(studentNumber);
+		ApiResponse<List<AssignmentResponse>> response = ApiResponse.<List<AssignmentResponse>>builder()
+			.status(200)
+			.message("과제를 가져오는데 성공하였습니다!")
+			.data(assignments)
+			.build();
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/course/non-regular")
+	public ResponseEntity<?> addNonRegularCourse(@RequestBody AddNonRegularCourseRequest addNonRegularCourseRequest) {
+		userService.addNonRegularCourse(addNonRegularCourseRequest);
+		ApiResponse<Void> response = ApiResponse.<Void>builder()
+			.status(200)
+			.message("비정규 과목을 모두 저장하였습니다!!")
+			.data(null)
+			.build();
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/main/today/assignment")
+	public ResponseEntity<?> getTodayAssignment(@RequestParam String studentNumber) {
+		List<AssignmentResponse> todayAssignment = userService.getTodayAssignment(studentNumber);
+		ApiResponse<List<AssignmentResponse>> response = ApiResponse.<List<AssignmentResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
+			.data(todayAssignment)
+			.build();
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/main/d-day")
+	public ResponseEntity<?> getDday(@RequestParam String studentNumber) {
+		List<AssignmentDdayResponse> assignmentDday = userService.getAssignmentDday(studentNumber);
+		ApiResponse<List<AssignmentDdayResponse>> response = ApiResponse.<List<AssignmentDdayResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료1 하였습니다!!")
+			.data(assignmentDday)
+			.build();
+		return ResponseEntity.ok(response);
 	}
 
     @GetMapping("/myPage")
