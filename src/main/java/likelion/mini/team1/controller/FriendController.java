@@ -61,4 +61,20 @@ public class FriendController {
 				.body(new ApiResponse(status, message, null));
 		}
 	}
+
+	@PostMapping("/unbest")
+	public ResponseEntity<ApiResponse> unregisterBestFriend(@RequestBody BestFriendRequest request) {
+		try {
+			friendService.unregisterBestFriend(request);
+			return ResponseEntity.ok(new ApiResponse(200, "짱친 관계가 해제되었습니다.", null));
+		} catch (RuntimeException e) {
+			String message = e.getMessage();
+			int status = 400;
+			if (message.equals("짱친 정보가 존재하지 않습니다.")) status = 404;
+			else if (message.equals("짱친으로 등록된 친구가 아닙니다.")) status = 409;
+
+			return ResponseEntity.status(status).body(new ApiResponse(status, message, null));
+		}
+	}
+
 }
