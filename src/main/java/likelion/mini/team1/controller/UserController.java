@@ -101,5 +101,11 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/activity1/share")
+	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {
+		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivities(studentNumber);
+		return ResponseEntity.ok(activities);
+	}
+
 
 }
