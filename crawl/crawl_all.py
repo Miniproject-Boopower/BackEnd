@@ -1,5 +1,4 @@
 import sys
-import json
 
 student_num = sys.argv[1]
 password = sys.argv[2]
@@ -13,9 +12,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 from datetime import datetime
+import shutil
+import json
+import tempfile
+import os
 
 chrome_options = Options()
-chrome_options.add_argument("--headless")  # GUI 없이 실행하고 싶으면 이 줄 추가
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
+# 👇 고유한 user-data-dir을 임시 폴더로 지정
+user_data_dir = tempfile.mkdtemp()
+chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 driver.get('https://eclass.hufs.ac.kr/ilos/main/main_form.acl')
@@ -46,7 +56,7 @@ pw_input.send_keys(password)
 # --- 5. 로그인 완료 ---
 login_submit_button = driver.find_element(By.CSS_SELECTOR, 'input[type="image"]')
 login_submit_button.click()
-
+print("[DEBUG] 로그인 후 URL:", driver.current_url, file=sys.stderr)
 time.sleep(3)
 
 # --- 6. 정규/비정규 과목명 가져오기 ---
@@ -55,8 +65,9 @@ non_regular_courses = []
 is_regular = True
 
 li_elements = driver.find_elements(By.CSS_SELECTOR, 'ol > li')
-
+print("[DEBUG] li 개수:", len(li_elements), file=sys.stderr)
 for li in li_elements:
+    print("[DEBUG] li text:", li.text.strip(), file=sys.stderr)
     if 'term_info' in li.get_attribute('class'):
         if li.text.strip() == '비정규과목':
             is_regular = False
@@ -120,6 +131,9 @@ for idx, cell in enumerate(calendar_cells):
     except:
         continue
 
+print("[DEBUG] 달력 셀 수:", len(calendar_cells), file=sys.stderr)
+print("[DEBUG] schedule_days:", schedule_days, file=sys.stderr)
+
 # --- 8. 일정 데이터 수집 시작 ---
 schedule_infos = []
 
@@ -151,6 +165,7 @@ for day_text in schedule_days:
 
         # 셀 클릭 성공하면 과제 긁기
         task_elements = driver.find_elements(By.XPATH, '//*[starts-with(@id, "change_")]')
+        print("[DEBUG] task_elements 수:", len(task_elements), file=sys.stderr)
 
         for task_elem in task_elements:
             try:
@@ -243,9 +258,10 @@ for day_text in schedule_days:
         continue
 
 # --- 9. 최종 결과 출력 ---
-
+print(f"[DEBUG] 수집된 과제 수: {len(schedule_infos)}", file=sys.stderr)
 print(json.dumps(schedule_infos, ensure_ascii=False))
 
 
 # --- 10. 드라이버 종료 ---
 driver.quit()
+shutil.rmtree(user_data_dir, ignore_errors=True)
