@@ -90,5 +90,22 @@ public class UserService {
 		return userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
+	public void fixImportActivity(FixImportActivityRequest request) {
+		User user = userRepository.findByStudentNumber(request.getStudentNumber())
+				.orElseThrow(() -> new RuntimeException("해당 유저가 존재하지 않습니다."));
+		Activity activity = activityRepository.findByIdAndUser(request.getActivityId(), user)
+				.orElseThrow(() -> new RuntimeException("해당 활동이 존재하지 않습니다."));
+		activity.setName(request.getNewName());
+		activity.setDescription(request.getNewDescription());
+		activity.setDate(request.getNewDate());
+		activity.setImportance(request.getImportance());
+		activityRepository.save(activity);
+	}
+
+
+
+
+
+
 }
 

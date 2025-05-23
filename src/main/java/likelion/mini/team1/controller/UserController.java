@@ -101,5 +101,12 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@PostMapping("fix-importActivity")
+	public ResponseEntity<?> fixImportActivity(@RequestBody FixImportActivityRequest request) {
+		userService.fixImportActivity(request);
+		return ResponseEntity.ok("중요 활동이 성공적으로 수정되었습니다.");
+	}
+
+
 
 }
