@@ -101,5 +101,11 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@PostMapping("/activity1update")
+	public ResponseEntity<?> updateActivity1(@RequestBody UpdateActivity1Request request) {
+		userService.updateActivity1(request);
+		return ResponseEntity.ok("1학기 활동이 성공적으로 수정되었습니다.");
+	}
+
 
 }

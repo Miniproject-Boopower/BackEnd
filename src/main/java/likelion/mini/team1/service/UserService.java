@@ -1,5 +1,8 @@
 package likelion.mini.team1.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
+import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
+import likelion.mini.team1.domain.entity.Assignment;
 import likelion.mini.team1.domain.entity.User;
 import likelion.mini.team1.domain.entity.UserCourse;
 import likelion.mini.team1.domain.enums.CourseType;
@@ -90,5 +95,44 @@ public class UserService {
 		return userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
+
+	public List<AssignmentResponse> getTodayAssignment(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		LocalDateTime start = LocalDate.now().atStartOfDay();
+		LocalDateTime end = LocalDate.now().atStartOfDay().plusDays(1);
+		return assignmentRepository.findAllByUserAndDeadlineAfterAndDeadlineBefore(
+			user,
+			start,
+			end
+		).stream().map(assignment -> AssignmentResponse.builder()
+			.assignmentName(assignment.getTitle())
+			.subjectName(assignment.getUserCourse().getCourseName())
+			.deadline(assignment.getDeadline())
+			.status(assignment.getStatus())
+			.build()).toList();
+	}
+
+	public List<AssignmentDdayResponse> getAssignmentDday(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		List<Assignment> allByUserAndDeadlineAfter = assignmentRepository.findAllByUserAndDeadlineAfter(user,
+			LocalDate.now().atStartOfDay());
+		List<AssignmentDdayResponse> list = allByUserAndDeadlineAfter.stream().map(assignment -> {
+			long between = ChronoUnit.DAYS.between(LocalDate.now(), assignment.getDeadline().toLocalDate());
+			return AssignmentDdayResponse.builder()
+				.assignmentName(assignment.getTitle())
+				.leftDay("D-" + between).build();
+		}).toList();
+		return list;
+	}
+	public void updateActivity1(UpdateActivity1 request) {
+		Activity1 activity = activity1Repository.findByName(request.getActivityName())
+				.orElseThrow(() -> new RuntimeException("해당 활동이 존재하지 않습니다."));
+		activity.setName(request.getActivityName());
+		activity.setDescription(request.getDescription());
+		activity.setDate(request.getDate());
+		activity1Repository.save(activity);
+	}
+
+
 }
 
