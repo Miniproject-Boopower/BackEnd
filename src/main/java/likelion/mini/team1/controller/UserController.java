@@ -102,6 +102,11 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/activity1")
+	public ResponseEntity<?> activity1(@RequestParam String studentNumber) {
+		return ResponseEntity.ok(userService.getFirstSemesterActivities(studentNumber));
+	}
+
 
 	@GetMapping("/main/today/assignment")
 	public ResponseEntity<?> getTodayAssignment(@RequestParam String studentNumber) {
@@ -120,10 +125,18 @@ public class UserController {
 		List<AssignmentDdayResponse> assignmentDday = userService.getAssignmentDday(studentNumber);
 		ApiResponse<List<AssignmentDdayResponse>> response = ApiResponse.<List<AssignmentDdayResponse>>builder()
 			.status(200)
-			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
+			.message("오늘 해야할 과제를 조회완료1 하였습니다!!")
 			.data(assignmentDday)
 			.build();
 		return ResponseEntity.ok(response);
 	}
+
+    @GetMapping("/myPage")
+    public ResponseEntity<?> myPage(@RequestParam String studentNumber) {
+        return ResponseEntity.ok(userService.getUser(studentNumber));
+    }
+
+
+
 
 }

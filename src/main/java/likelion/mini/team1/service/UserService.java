@@ -71,6 +71,16 @@ public class UserService {
 		)).toList();
 	}
 
+    public MyPageResponse getUser(String studentNum) {
+        User user = userRepository.findByStudentNumber(studentNum).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+        return MyPageResponse.builder()
+                .studentNumber(user.getStudentNumber())
+                .name(user.getName())
+                .major(user.getMajor())
+                .minor(user.getMinor())
+                .build();
+    }
+
 	public boolean login(String studentNumber, String password) {
 		User user = findUserByStudentNumber(studentNumber);
 
@@ -94,6 +104,20 @@ public class UserService {
 	public User findUserByStudentNumber(String studentNumber) {
 		return userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+	}
+
+	public List<FirstSemesterActivitiesResponse> getFirstSemesterActivities(String studentNumber) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+				.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+		List<FirstSemesterActivity> activities = activityRepository.findAllByUserAndSemester(user, "1학기");
+		return activities.stream()
+				.map(activity -> FirstSemesterActivitiesResponse.builder()
+						.activityName(activity.getName())
+						.description(activity.getDescription())
+						.date(activity.getDate())
+						.club(user.getClubName())
+						.build())
+				.toList();
 	}
 
 	public List<AssignmentResponse> getTodayAssignment(String studentNumber) {
