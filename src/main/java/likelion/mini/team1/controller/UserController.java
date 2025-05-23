@@ -101,5 +101,11 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/friendList")
+	public ResponseEntity<?> getFriendList(@RequestParam String studentNumber) {
+		return ResponseEntity.ok(userService.getFriendList(studentNumber));
+	}
+
+
 
 }

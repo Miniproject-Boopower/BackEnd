@@ -90,5 +90,19 @@ public class UserService {
 		return userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
+
+	public List<FriendResponse> getFriendList(String studentNumber) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+				.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+		List<Friend> friends = friendRepository.findAllByUser(user);
+		return friends.stream()
+				.map(friend -> FriendResponse.builder()
+						.name(friend.getFriend().getName())
+						.studentNumber(friend.getFriend().getStudentNumber())
+						.major(friend.getFriend().getMajor())
+						.build())
+				.toList();
+	}
+
 }
 
