@@ -132,9 +132,9 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
-	@GetMapping("/activity1/share")
-	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {
-		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivities(studentNumber);
+	@GetMapping("share-importActivity")
+	public ResponseEntity<?> shareImportantActivities(@RequestParam String studentNumber) {
+		List<ImportantActivityResponse> activities = userService.getImportantActivities(studentNumber);
 		return ResponseEntity.ok(activities);
 	}
 
