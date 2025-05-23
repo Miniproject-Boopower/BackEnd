@@ -33,8 +33,8 @@ public class UserController {
 
 	@GetMapping("/test")
 	public String testAPI() {
-		// userService.test();
-		return "test API 입니다";
+		userService.test();
+		return "test API 입니다1234";
 	}
 
 	@PostMapping("/sign-up")
@@ -125,5 +125,13 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+
+    @GetMapping("/myPage")
+    public ResponseEntity<?> myPage(@RequestParam String studentNumber) {
+        return ResponseEntity.ok(userService.getUser(studentNumber));
+    }
+
+
+
 
 }

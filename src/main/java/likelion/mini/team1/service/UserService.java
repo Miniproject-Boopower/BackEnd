@@ -71,6 +71,16 @@ public class UserService {
 		)).toList();
 	}
 
+    public MyPageResponse getUser(String studentNum) {
+        User user = userRepository.findByStudentNumber(studentNum).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
+        return MyPageResponse.builder()
+                .studentNumber(user.getStudentNumber())
+                .name(user.getName())
+                .major(user.getMajor())
+                .minor(user.getMinor())
+                .build();
+    }
+
 	public boolean login(String studentNumber, String password) {
 		User user = findUserByStudentNumber(studentNumber);
 
