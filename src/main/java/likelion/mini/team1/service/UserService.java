@@ -43,11 +43,11 @@ public class UserService {
 			throw new RuntimeException("이미 존재하는 유저 입니다.");
 		}
 		User newUser = User.builder()
-			.studentNumber(signUpRequest.getStudentNumber())
-			.name(signUpRequest.getName())
-			.major(signUpRequest.getMajor())
-			.password(AESUtil.encrypt(signUpRequest.getPassword()))
-			.build();
+				.studentNumber(signUpRequest.getStudentNumber())
+				.name(signUpRequest.getName())
+				.major(signUpRequest.getMajor())
+				.password(AESUtil.encrypt(signUpRequest.getPassword()))
+				.build();
 		userRepository.save(newUser);
 	}
 
@@ -55,19 +55,19 @@ public class UserService {
 		User user = userRepository.findByStudentNumber(studentNum).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
 		List<UserCourse> courses = userCourseRepository.findAllByUser(user);
 		return courses.stream().map(course -> CourseResponse.builder()
-			.courseType(course.getCourseType())
-			.courseName(course.getCourseName())
-			.importanceLevel(course.getImportanceLevel())
-			.build()).toList();
+				.courseType(course.getCourseType())
+				.courseName(course.getCourseName())
+				.importanceLevel(course.getImportanceLevel())
+				.build()).toList();
 	}
 
 	public List<AssignmentResponse> getAssignments(String studentNum) {
 		User user = userRepository.findByStudentNumber(studentNum).orElseThrow(() -> new RuntimeException("유저가 없습니다."));
 		return assignmentRepository.findAllByUser(user).stream().map(((assignment) -> AssignmentResponse.builder()
-			.assignmentName(assignment.getTitle())
-			.deadline(assignment.getDeadline())
-			.subjectName(assignment.getUserCourse().getCourseName())
-			.status(assignment.getStatus()).build()
+				.assignmentName(assignment.getTitle())
+				.deadline(assignment.getDeadline())
+				.subjectName(assignment.getUserCourse().getCourseName())
+				.status(assignment.getStatus()).build()
 		)).toList();
 	}
 
@@ -83,46 +83,81 @@ public class UserService {
 		User user = findUserByStudentNumber(addNonRegularCourseRequest.getStudentNumber());
 		for (String courseName : addNonRegularCourseRequest.getCourseName()) {
 			UserCourse newUserCourse = UserCourse.builder()
-				.courseType(CourseType.NON_REGULAR)
-				.user(user)
-				.courseName(courseName)
-				.build();
+					.courseType(CourseType.NON_REGULAR)
+					.user(user)
+					.courseName(courseName)
+					.build();
 			userCourseRepository.save(newUserCourse);
 		}
 	}
 
 	public User findUserByStudentNumber(String studentNumber) {
 		return userRepository.findByStudentNumber(studentNumber)
-			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+				.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
+
+	public void fixImportActivity(FixImportActivityRequest request) {
+		User user = userRepository.findByStudentNumber(request.getStudentNumber())
+				.orElseThrow(() -> new RuntimeException("해당 유저가 존재하지 않습니다."));
+		Activity activity = activityRepository.findByIdAndUser(request.getActivityId(), user)
+				.orElseThrow(() -> new RuntimeException("해당 활동이 존재하지 않습니다."));
+		activity.setName(request.getNewName());
+		activity.setDescription(request.getNewDescription());
+		activity.setDate(request.getNewDate());
+		activity.setImportance(request.getImportance());
+		activityRepository.save(activity);
+	}
+
+
+
+
+
+
+=======
 
 	public List<AssignmentResponse> getTodayAssignment(String studentNumber) {
 		User user = findUserByStudentNumber(studentNumber);
 		LocalDateTime start = LocalDate.now().atStartOfDay();
 		LocalDateTime end = LocalDate.now().atStartOfDay().plusDays(1);
 		return assignmentRepository.findAllByUserAndDeadlineAfterAndDeadlineBefore(
-			user,
-			start,
-			end
+				user,
+				start,
+				end
 		).stream().map(assignment -> AssignmentResponse.builder()
-			.assignmentName(assignment.getTitle())
-			.subjectName(assignment.getUserCourse().getCourseName())
-			.deadline(assignment.getDeadline())
-			.status(assignment.getStatus())
-			.build()).toList();
+				.assignmentName(assignment.getTitle())
+				.subjectName(assignment.getUserCourse().getCourseName())
+				.deadline(assignment.getDeadline())
+				.status(assignment.getStatus())
+				.build()).toList();
 	}
 
 	public List<AssignmentDdayResponse> getAssignmentDday(String studentNumber) {
 		User user = findUserByStudentNumber(studentNumber);
 		List<Assignment> allByUserAndDeadlineAfter = assignmentRepository.findAllByUserAndDeadlineAfter(user,
-			LocalDate.now().atStartOfDay());
+				LocalDate.now().atStartOfDay());
 		List<AssignmentDdayResponse> list = allByUserAndDeadlineAfter.stream().map(assignment -> {
 			long between = ChronoUnit.DAYS.between(LocalDate.now(), assignment.getDeadline().toLocalDate());
 			return AssignmentDdayResponse.builder()
-				.assignmentName(assignment.getTitle())
-				.leftDay("D-" + between).build();
+					.assignmentName(assignment.getTitle())
+					.leftDay("D-" + between).build();
 		}).toList();
 		return list;
-	}
-}
 
+		public List<ImportantActivityResponse> getImportantActivities(String studentNumber) {
+			User user = userRepository.findByStudentNumber(studentNumber)
+					.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+			List<Activity> activities = activityRepository.findAllByUserAndImportance(user, true);
+			return activities.stream()
+					.map(activity -> ImportantActivityResponse.builder()
+							.id(activity.getId())
+							.name(activity.getName())
+							.description(activity.getDescription())
+							.date(activity.getDate())
+							.build())
+					.toList();
+		}
+
+	}
+
+
+}
