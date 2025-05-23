@@ -2,7 +2,9 @@
 
 # 본문은 아래에 작성  
 
-# 꼬릿말은 아래에 작성: ex) Github issue #23  
+# 꼬릿말은 아래에 작성:
+# ex) Github issue #23
+# ex) Close #23
 # Fixes:
 # --- COMMIT END ---  
 #   <타입> 리스트  
