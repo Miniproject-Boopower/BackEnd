@@ -102,11 +102,6 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
-	@GetMapping("/activity1")
-	public ResponseEntity<?> activity1(@RequestParam String studentNumber) {
-		return ResponseEntity.ok(userService.getFirstSemesterActivities(studentNumber));
-	}
-
 
 	@GetMapping("/main/today/assignment")
 	public ResponseEntity<?> getTodayAssignment(@RequestParam String studentNumber) {
@@ -130,13 +125,5 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
-
-    @GetMapping("/myPage")
-    public ResponseEntity<?> myPage(@RequestParam String studentNumber) {
-        return ResponseEntity.ok(userService.getUser(studentNumber));
-    }
-
-
-
 
 }
