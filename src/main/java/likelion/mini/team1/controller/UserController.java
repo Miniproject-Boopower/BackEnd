@@ -102,14 +102,4 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
-	@DeleteMapping("/delete-ImportActivity")
-	public ResponseEntity<?> deleteImportantActivity(@RequestParam String studentNumber, @RequestParam Long activityId) {
-		userService.deleteImportantActivity(studentNumber, activityId);
-		return ResponseEntity.ok("중요 활동 삭제 완료");
-	}
-
-
-
-
-
 }

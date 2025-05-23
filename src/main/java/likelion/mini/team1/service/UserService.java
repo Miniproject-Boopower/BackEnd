@@ -90,17 +90,5 @@ public class UserService {
 		return userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
-
-	public void deleteImportantActivity(String studentNumber, Long activityId) {
-		User user = userRepository.findByStudentNumber(studentNumber)
-				.orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
-		Activity activity = activityRepository.findByIdAndUser(activityId, user)
-				.orElseThrow(() -> new IllegalArgumentException("해당 활동이 존재하지 않거나 유저 소유가 아닙니다."));
-		activityRepository.delete(activity);
-	}
-
-
-
-
 }
 
