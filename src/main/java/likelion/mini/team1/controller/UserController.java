@@ -33,8 +33,8 @@ public class UserController {
 
 	@GetMapping("/test")
 	public String testAPI() {
-		userService.test();
-		return "test API 입니다1234";
+		// userService.test();
+		return "test API 입니다12341";
 	}
 
 	@PostMapping("/sign-up")
@@ -102,6 +102,11 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/activity1")
+	public ResponseEntity<?> activity1(@RequestParam String studentNumber) {
+		return ResponseEntity.ok(userService.getFirstSemesterActivities(studentNumber));
+	}
+
 
 	@GetMapping("/main/today/assignment")
 	public ResponseEntity<?> getTodayAssignment(@RequestParam String studentNumber) {

@@ -106,6 +106,20 @@ public class UserService {
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
 
+	public List<FirstSemesterActivitiesResponse> getFirstSemesterActivities(String studentNumber) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+				.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
+		List<FirstSemesterActivity> activities = activityRepository.findAllByUserAndSemester(user, "1학기");
+		return activities.stream()
+				.map(activity -> FirstSemesterActivitiesResponse.builder()
+						.activityName(activity.getName())
+						.description(activity.getDescription())
+						.date(activity.getDate())
+						.club(user.getClubName())
+						.build())
+				.toList();
+	}
+
 	public List<AssignmentResponse> getTodayAssignment(String studentNumber) {
 		User user = findUserByStudentNumber(studentNumber);
 		LocalDateTime start = LocalDate.now().atStartOfDay();
