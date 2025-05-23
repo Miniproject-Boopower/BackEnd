@@ -101,5 +101,14 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@DeleteMapping("/activity1/delete")
+	public ResponseEntity<?> deleteActivity1(@RequestParam String studentNumber, @RequestParam Long activityId) {
+		userService.deleteActivity1(studentNumber, activityId);
+		return ResponseEntity.ok("1학기 활동이 삭제되었습니다.");
+	}
+
+
+
+
 
 }

@@ -90,5 +90,16 @@ public class UserService {
 		return userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
+
+	public void deleteActivity1(String studentNumber, Long activityId) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+				.orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+
+		Activity1 activity = activity1Repository.findByIdAndUser(activityId, user)
+				.orElseThrow(() -> new RuntimeException("해당 유저의 활동이 아닙니다."));
+
+		activity1Repository.delete(activity);
+	}
+
 }
 
