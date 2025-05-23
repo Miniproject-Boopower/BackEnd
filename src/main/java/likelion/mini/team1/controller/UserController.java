@@ -101,5 +101,11 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+	@GetMapping("/importActivity")
+	public ResponseEntity<?> getImportantActivities(@RequestParam String studentNumber) {
+		List<ImportantActivityResponse> result = userService.getImportantActivities(studentNumber);
+		return ResponseEntity.ok(result);
+	}
+
 
 }
