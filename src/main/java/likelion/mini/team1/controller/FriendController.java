@@ -3,6 +3,7 @@ package likelion.mini.team1.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -62,7 +63,7 @@ public class FriendController {
 		}
 	}
 
-	@PostMapping("/unbest")
+	@DeleteMapping("/unbest")
 	public ResponseEntity<ApiResponse> unregisterBestFriend(@RequestBody BestFriendRequest request) {
 		try {
 			friendService.unregisterBestFriend(request);
