@@ -3,6 +3,7 @@ package likelion.mini.team1.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -110,7 +111,7 @@ public class FriendController {
 		}
 	}
 
-	@PostMapping("/delete")
+	@DeleteMapping("/delete")
 	public ResponseEntity<ApiResponse> deleteFriend(@RequestBody FriendDeleteRequest request) {
 		try {
 			friendService.deleteFriend(request);
