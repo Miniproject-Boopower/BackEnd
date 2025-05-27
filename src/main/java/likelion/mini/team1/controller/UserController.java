@@ -26,6 +26,7 @@ import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 import likelion.mini.team1.domain.dto.response.ScheduleResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
+import likelion.mini.team1.domain.dto.UserProfileResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -147,6 +148,12 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+
+	@GetMapping("/profile")
+	public ResponseEntity<?> getProfile(@RequestParam String studentNumber, @RequestParam String major,
+										@RequestParam String minor) {
+		UserProfileResponse profile = userService.getProfile(studentNumber, major, minor);
+		return ResponseEntity.ok(profile);
 
 	@GetMapping("/activity1/share")
 	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {

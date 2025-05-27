@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter
-@Builder
-@AllArgsConstructor
-public class ApiResponse<T> {
-    private int status;
-    private String message;
-    private T data;
 
+@Getter
+@AllArgsConstructor
+public class UserProfileResponse {
+    private String name;
+    private String studentNumber;
+    private String major;
+    private String minor;
 }
