@@ -133,6 +133,5 @@ public class UserService {
 		activity1Repository.save(activity);
 	}
 
-
 }
 

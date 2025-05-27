@@ -16,6 +16,7 @@ import likelion.mini.team1.domain.dto.ApiResponse;
 import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
 import likelion.mini.team1.domain.dto.request.LoginRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
+import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.service.UserService;
@@ -105,6 +106,35 @@ public class UserController {
 	public ResponseEntity<?> updateActivity1(@RequestBody UpdateActivity1Request request) {
 		userService.updateActivity1(request);
 		return ResponseEntity.ok("1학기 활동이 성공적으로 수정되었습니다.");
+	}
+
+
+	@GetMapping("/main/today/assignment")
+	public ResponseEntity<?> getTodayAssignment(@RequestParam String studentNumber) {
+		List<AssignmentResponse> todayAssignment = userService.getTodayAssignment(studentNumber);
+		ApiResponse<List<AssignmentResponse>> response = ApiResponse.<List<AssignmentResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
+			.data(todayAssignment)
+			.build();
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/main/d-day")
+	public ResponseEntity<?> getDday(@RequestParam String studentNumber) {
+		List<AssignmentDdayResponse> assignmentDday = userService.getAssignmentDday(studentNumber);
+		ApiResponse<List<AssignmentDdayResponse>> response = ApiResponse.<List<AssignmentDdayResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료1 하였습니다!!")
+			.data(assignmentDday)
+			.build();
+		return ResponseEntity.ok(response);
+	}
+	@GetMapping("/activity1/share")
+	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {
+		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivities(studentNumber);
+		return ResponseEntity.ok(activities);
 	}
 
 
