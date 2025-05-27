@@ -23,6 +23,7 @@ import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
+import likelion.mini.team1.domain.dto.response.ScheduleResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -124,12 +125,24 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/main/today/schedule")
+	public ResponseEntity<?> getTodaySchedule(@RequestParam String studentNumber) {
+		List<ScheduleResponse> todaySchedule = userService.getTodaySchedule(studentNumber);
+		ApiResponse<List<ScheduleResponse>> response = ApiResponse.<List<ScheduleResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
+			.data(todaySchedule)
+			.build();
+
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/main/d-day")
 	public ResponseEntity<?> getDday(@RequestParam String studentNumber) {
 		List<AssignmentDdayResponse> assignmentDday = userService.getAssignmentDday(studentNumber);
 		ApiResponse<List<AssignmentDdayResponse>> response = ApiResponse.<List<AssignmentDdayResponse>>builder()
 			.status(200)
-			.message("오늘 해야할 과제를 조회완료1 하였습니다!!")
+			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
 			.data(assignmentDday)
 			.build();
 		return ResponseEntity.ok(response);

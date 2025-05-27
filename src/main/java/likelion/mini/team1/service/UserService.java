@@ -8,6 +8,7 @@ import java.util.List;
 import jakarta.transaction.Transactional;
 import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
 import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
+import likelion.mini.team1.domain.dto.response.ScheduleResponse;
 import likelion.mini.team1.domain.entity.Activity;
 import likelion.mini.team1.domain.enums.Semester;
 import likelion.mini.team1.repository.ActivityRepository;
@@ -134,6 +135,22 @@ public class UserService {
 			.toList();
 	}
 
+	public List<ScheduleResponse> getTodaySchedule(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		LocalDateTime start = LocalDate.now().atStartOfDay();
+		LocalDateTime end = LocalDate.now().atStartOfDay().plusDays(1);
+		return scheduleRepository.findAllByUserAndDateAfterAndDateBefore(user, start, end)
+			.stream()
+			.map(schedule -> ScheduleResponse.builder()
+				.id(schedule.getId())
+				.date(schedule.getDate())
+				.userName(schedule.getUser().getName())
+				.scheduleEnums(schedule.getScheduleEnums())
+				.name(schedule.getName())
+				.build())
+			.toList();
+	}
+
 	public List<AssignmentDdayResponse> getAssignmentDday(String studentNumber) {
 		User user = findUserByStudentNumber(studentNumber);
 		List<Assignment> allByUserAndDeadlineAfter = assignmentRepository.findAllByUserAndDeadlineAfter(user,
@@ -180,6 +197,7 @@ public class UserService {
 			.scheduleEnums(createScheduleRequest.getScheduleEnums())
 			.name(createScheduleRequest.getName())
 			.user(user)
+			.date(createScheduleRequest.getDate())
 			.build();
 		scheduleRepository.save(schedule);
 	}
