@@ -5,6 +5,11 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
+import likelion.mini.team1.domain.entity.Activity;
+import likelion.mini.team1.domain.enums.Semester;
+import likelion.mini.team1.repository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +27,7 @@ import likelion.mini.team1.repository.UserCourseRepository;
 import likelion.mini.team1.repository.UserRepository;
 import likelion.mini.team1.util.AESUtil;
 import lombok.RequiredArgsConstructor;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +39,8 @@ public class UserService {
 	private final UserCourseRepository userCourseRepository;
 	@Autowired
 	private final AssignmentRepository assignmentRepository;
+	@Autowired
+	private final ActivityRepository activityRepository;
 
 	public void test() {
 		throw new RuntimeException("sad");
@@ -124,5 +132,30 @@ public class UserService {
 		}).toList();
 		return list;
 	}
+
+	public List<FirstSemesterActivityResponse> getFirstSemesterActivity(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		List<Activity> activities = activityRepository.findAllByUserAndSemester(user, Semester.FIRST_SEMESTER);
+		return activities.stream()
+				.map(activity -> new FirstSemesterActivityResponse(
+						activity.getActivityName(),
+						activity.getActivityDescription(),
+						activity.getActivityDate()
+				))
+				.toList();
+	}
+
+	public void createActivity(CreateActivityResponse createActivityResponse) {
+		User user = userRepository.findByStudentNumber(createActivityResponse.getStudentNumber())
+				.orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+		Activity newActivity = new Activity();
+		newActivity.setActivityName(createActivityResponse.getName());
+		newActivity.setActivityDescription(createActivityResponse.getDescription());
+		newActivity.setActivityDate(createActivityResponse.getDateTime());
+		newActivity.setSemester(createActivityResponse.getSemester());
+		newActivity.setUser(user);
+		activityRepository.save(newActivity);
+	}
+
 }
 

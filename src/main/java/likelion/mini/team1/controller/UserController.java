@@ -2,15 +2,11 @@ package likelion.mini.team1.controller;
 
 import java.util.List;
 
+import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
 import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
@@ -21,6 +17,7 @@ import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -126,4 +123,20 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/activity1/share")
+	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {
+		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
+		return ResponseEntity.ok(activities);
+	}
+	@GetMapping("/check-activity1")
+	public ResponseEntity<?> checkFirstSemesterActivities(@RequestParam String studentNumber) {
+		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
+		return ResponseEntity.ok(activities);
+	}
+
+	@PostMapping("/createActivity")
+	public ResponseEntity<?> createActivity(@RequestBody CreateActivityResponse createActivityResponse) {
+		userService.createActivity(createActivityResponse);
+		return null;
+	}
 }
