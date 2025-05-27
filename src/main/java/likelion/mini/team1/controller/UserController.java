@@ -2,6 +2,7 @@ package likelion.mini.team1.controller;
 
 import java.util.List;
 
+import likelion.mini.team1.domain.dto.request.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,13 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
-import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
-import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
-import likelion.mini.team1.domain.dto.request.CreateScheduleRequest;
-import likelion.mini.team1.domain.dto.request.LoginRequest;
-import likelion.mini.team1.domain.dto.request.SignUpRequest;
 import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
@@ -108,6 +105,7 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
+
 	@DeleteMapping("/activity1/delete")
 	public ResponseEntity<?> deleteActivity(@RequestParam String studentNumber, @RequestParam Long activityId) {
 		userService.deleteActivity1(studentNumber, activityId);
@@ -161,6 +159,12 @@ public class UserController {
 	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {
 		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
 		return ResponseEntity.ok(activities);
+	}
+
+	@PutMapping("/fix-activity1")
+	public ResponseEntity<?> fixActivity(@RequestBody FixActivityRequest fixActivityRequest) {
+		userService.fixActivity(fixActivityRequest);
+		return ResponseEntity.ok("수정이 완료되었습니다.");
 	}
 
 	@GetMapping("/check-activity1")
