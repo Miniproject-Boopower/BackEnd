@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
@@ -32,9 +33,9 @@ public class FriendController {
 	private final FriendService friendService;
 
 	@GetMapping("/list")
-	public ResponseEntity<ApiResponse<?>> getFriendList(@RequestBody StudentNumberRequest request) {
+	public ResponseEntity<ApiResponse<?>> getFriendList(@RequestParam String request) {
 		try {
-			List<FriendResponse> friends = friendService.getFriendsByStudentNumber(request.getStudentNumber());
+			List<FriendResponse> friends = friendService.getFriendsByStudentNumber(request);
 			return ResponseEntity.ok(
 				ApiResponse.<List<FriendResponse>>builder()
 					.status(200)
