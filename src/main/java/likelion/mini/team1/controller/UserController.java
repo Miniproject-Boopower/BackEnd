@@ -23,10 +23,10 @@ import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
+import likelion.mini.team1.domain.dto.response.MypageResponse;
 import likelion.mini.team1.domain.dto.response.ScheduleResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
-import likelion.mini.team1.domain.dto.UserProfileResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -152,7 +152,7 @@ public class UserController {
 	@GetMapping("/profile")
 	public ResponseEntity<?> getProfile(@RequestParam String studentNumber, @RequestParam String major,
 										@RequestParam String minor) {
-		UserProfileResponse profile = userService.getProfile(studentNumber, major, minor);
+		MypageResponse profile = userService.getProfile(studentNumber, major, minor);
 		return ResponseEntity.ok(profile);
 
 	}
