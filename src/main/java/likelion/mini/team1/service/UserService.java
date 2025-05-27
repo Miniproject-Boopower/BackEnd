@@ -5,6 +5,12 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import jakarta.transaction.Transactional;
+import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
+import likelion.mini.team1.domain.entity.Activity;
+import likelion.mini.team1.domain.enums.Semester;
+import likelion.mini.team1.repository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -146,9 +152,13 @@ public class UserService {
 		User user = findUserByStudentNumber(studentNumber);
 		List<Activity> activities = activityRepository.findAllByUserAndSemester(user, Semester.FIRST_SEMESTER);
 		return activities.stream()
-			.map(activity -> new FirstSemesterActivityResponse(activity.getActivityName(),
-				activity.getActivityDescription(), activity.getActivityDate()))
-			.toList();
+				.map(activity -> new FirstSemesterActivityResponse(
+						activity.getId(),
+						activity.getActivityName(),
+						activity.getActivityDescription(),
+						activity.getActivityDate()
+				))
+				.toList();
 	}
 
 	public void createActivity(CreateActivityResponse createActivityResponse) {
@@ -173,5 +183,16 @@ public class UserService {
 			.build();
 		scheduleRepository.save(schedule);
 	}
+	@Transactional
+	public void deleteActivity1(String studentNumber, Long activityId) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+				.orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+
+		Activity activity = activityRepository.findByIdAndUser(activityId, user)
+				.orElseThrow(() -> new RuntimeException("해당 유저의 활동이 아닙니다."));
+
+		activityRepository.delete(activity);
+	}
+
 }
 
