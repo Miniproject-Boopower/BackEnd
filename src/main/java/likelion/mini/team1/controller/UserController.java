@@ -2,22 +2,28 @@ package likelion.mini.team1.controller;
 
 import java.util.List;
 
-import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
 import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
+import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
+import likelion.mini.team1.domain.dto.request.CreateScheduleRequest;
 import likelion.mini.team1.domain.dto.request.LoginRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
 import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
-import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -128,6 +134,7 @@ public class UserController {
 		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
 		return ResponseEntity.ok(activities);
 	}
+
 	@GetMapping("/check-activity1")
 	public ResponseEntity<?> checkFirstSemesterActivities(@RequestParam String studentNumber) {
 		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
@@ -138,5 +145,16 @@ public class UserController {
 	public ResponseEntity<?> createActivity(@RequestBody CreateActivityResponse createActivityResponse) {
 		userService.createActivity(createActivityResponse);
 		return null;
+	}
+
+	@PostMapping("/createSchedule")
+	public ResponseEntity<?> createSchedule(@RequestBody CreateScheduleRequest createScheduleRequest) {
+		userService.createSchedule(createScheduleRequest);
+		ApiResponse<List<AssignmentDdayResponse>> response = ApiResponse.<List<AssignmentDdayResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료1 하였습니다!!")
+			.data(null)
+			.build();
+		return ResponseEntity.ok(response);
 	}
 }

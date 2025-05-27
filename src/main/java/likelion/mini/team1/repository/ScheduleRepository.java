@@ -1,0 +1,8 @@
+package likelion.mini.team1.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import likelion.mini.team1.domain.entity.Schedule;
+
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
+}
