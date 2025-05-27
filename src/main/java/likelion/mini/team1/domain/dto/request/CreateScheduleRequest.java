@@ -1,5 +1,6 @@
 package likelion.mini.team1.domain.dto.request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import likelion.mini.team1.domain.enums.ScheduleEnums;
@@ -10,5 +11,5 @@ public class CreateScheduleRequest {
 	private String name;
 	private ScheduleEnums scheduleEnums;
 	private String studentNumber;
-	private LocalDateTime date;
+	private LocalDate date;
 }

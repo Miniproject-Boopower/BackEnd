@@ -1,5 +1,6 @@
 package likelion.mini.team1.domain.dto.response;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import likelion.mini.team1.domain.enums.ScheduleEnums;
@@ -13,11 +14,11 @@ public class ScheduleResponse {
 	private Long id;
 	private String name;
 	private ScheduleEnums scheduleEnums;
-	private LocalDateTime date;
+	private LocalDate date;
 	private String userName;
 
 	@Builder
-	public ScheduleResponse(Long id, String name, ScheduleEnums scheduleEnums, LocalDateTime date, String userName) {
+	public ScheduleResponse(Long id, String name, ScheduleEnums scheduleEnums, LocalDate date, String userName) {
 		this.id = id;
 		this.name = name;
 		this.scheduleEnums = scheduleEnums;

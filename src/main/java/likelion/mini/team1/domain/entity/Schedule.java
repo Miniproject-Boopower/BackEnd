@@ -1,5 +1,6 @@
 package likelion.mini.team1.domain.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
@@ -22,13 +23,13 @@ public class Schedule {
 	private Long id;
 	private String name;
 	private ScheduleEnums scheduleEnums;
-	private LocalDateTime date;
+	private LocalDate date;
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 
 	@Builder
-	public Schedule(String name, ScheduleEnums scheduleEnums, User user, LocalDateTime date) {
+	public Schedule(String name, ScheduleEnums scheduleEnums, User user, LocalDate date) {
 		this.name = name;
 		this.scheduleEnums = scheduleEnums;
 		this.user = user;
