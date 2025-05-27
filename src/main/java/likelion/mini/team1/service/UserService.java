@@ -5,11 +5,15 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import likelion.mini.team1.domain.dto.request.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
+import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
+import likelion.mini.team1.domain.dto.request.CreateScheduleRequest;
+import likelion.mini.team1.domain.dto.request.FixActivityRequest;
+import likelion.mini.team1.domain.dto.request.SignUpRequest;
 import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
@@ -158,14 +162,14 @@ public class UserService {
 		return list;
 	}
 
-	public MypageResponse getProfile(String studentNumber, String major, String minor) {
+	public MypageResponse getProfile(String studentNumber) {
 		User user = userRepository.findByStudentNumber(studentNumber)
 			.orElseThrow(() -> new RuntimeException("해당 학생 번호의 사용자가 존재하지 않습니다."));
 		return new MypageResponse(
 			user.getName(),
 			user.getStudentNumber(),
-			major,
-			minor
+			user.getMajor(),
+			user.getMinor()
 		);
 	}
 
@@ -209,10 +213,10 @@ public class UserService {
 	@Transactional
 	public void deleteActivity1(String studentNumber, Long activityId) {
 		User user = userRepository.findByStudentNumber(studentNumber)
-				.orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+			.orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
 
 		Activity activity = activityRepository.findByIdAndUser(activityId, user)
-				.orElseThrow(() -> new RuntimeException("해당 유저의 활동이 아닙니다."));
+			.orElseThrow(() -> new RuntimeException("해당 유저의 활동이 아닙니다."));
 
 		activityRepository.delete(activity);
 	}
@@ -220,7 +224,7 @@ public class UserService {
 	@Transactional
 	public void fixActivity(FixActivityRequest request) {
 		Activity activity = activityRepository.findById(request.getActivityId())
-				.orElseThrow(() -> new RuntimeException("해당 활동이 존재하지 않습니다."));
+			.orElseThrow(() -> new RuntimeException("해당 활동이 존재하지 않습니다."));
 		activity.setActivityDate(request.getActivityDate());
 		activity.setActivityDescription(request.getActivityDescription());
 		activity.setSemester(request.getSemester());

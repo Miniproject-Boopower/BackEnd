@@ -148,11 +148,9 @@ public class UserController {
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<?> getProfile(@RequestParam String studentNumber, @RequestParam String major,
-										@RequestParam String minor) {
-		MypageResponse profile = userService.getProfile(studentNumber, major, minor);
+	public ResponseEntity<?> getProfile(@RequestParam String studentNumber) {
+		MypageResponse profile = userService.getProfile(studentNumber);
 		return ResponseEntity.ok(profile);
-
 	}
 
 	@GetMapping("/activity1/share")
