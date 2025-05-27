@@ -23,6 +23,7 @@ public class User {
 	String password;
 	String name;
 	String major;
+	String minor;
 	LocalDateTime createdAt;
 	LocalDateTime updatedAt;
 

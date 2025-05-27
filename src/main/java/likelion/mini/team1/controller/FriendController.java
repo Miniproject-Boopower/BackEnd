@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/friends")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class FriendController {
 
@@ -66,7 +68,7 @@ public class FriendController {
 		}
 	}
 
-	@PostMapping("/unbest")
+	@DeleteMapping("/unbest")
 	public ResponseEntity<ApiResponse> unregisterBestFriend(@RequestBody BestFriendRequest request) {
 		try {
 			friendService.unregisterBestFriend(request);
