@@ -1,14 +1,25 @@
 package likelion.mini.team1.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import jakarta.transaction.Transactional;
+import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
+import likelion.mini.team1.domain.entity.Activity;
+import likelion.mini.team1.domain.enums.Semester;
+import likelion.mini.team1.repository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
 import likelion.mini.team1.domain.dto.request.SignUpRequest;
+import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
+import likelion.mini.team1.domain.entity.Assignment;
 import likelion.mini.team1.domain.entity.User;
 import likelion.mini.team1.domain.entity.UserCourse;
 import likelion.mini.team1.domain.enums.CourseType;
@@ -17,6 +28,7 @@ import likelion.mini.team1.repository.UserCourseRepository;
 import likelion.mini.team1.repository.UserRepository;
 import likelion.mini.team1.util.AESUtil;
 import lombok.RequiredArgsConstructor;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +40,8 @@ public class UserService {
 	private final UserCourseRepository userCourseRepository;
 	@Autowired
 	private final AssignmentRepository assignmentRepository;
+	@Autowired
+	private final ActivityRepository activityRepository;
 
 	public void test() {
 		throw new RuntimeException("sad");
@@ -91,14 +105,69 @@ public class UserService {
 			.orElseThrow(() -> new RuntimeException("해당 학번의 유저가 존재하지 않습니다."));
 	}
 
+	public List<AssignmentResponse> getTodayAssignment(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		LocalDateTime start = LocalDate.now().atStartOfDay();
+		LocalDateTime end = LocalDate.now().atStartOfDay().plusDays(1);
+		return assignmentRepository.findAllByUserAndDeadlineAfterAndDeadlineBefore(
+			user,
+			start,
+			end
+		).stream().map(assignment -> AssignmentResponse.builder()
+			.assignmentName(assignment.getTitle())
+			.subjectName(assignment.getUserCourse().getCourseName())
+			.deadline(assignment.getDeadline())
+			.status(assignment.getStatus())
+			.build()).toList();
+	}
+
+	public List<AssignmentDdayResponse> getAssignmentDday(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		List<Assignment> allByUserAndDeadlineAfter = assignmentRepository.findAllByUserAndDeadlineAfter(user,
+			LocalDate.now().atStartOfDay());
+		List<AssignmentDdayResponse> list = allByUserAndDeadlineAfter.stream().map(assignment -> {
+			long between = ChronoUnit.DAYS.between(LocalDate.now(), assignment.getDeadline().toLocalDate());
+			return AssignmentDdayResponse.builder()
+				.assignmentName(assignment.getTitle())
+				.leftDay("D-" + between).build();
+		}).toList();
+		return list;
+	}
+
+	public List<FirstSemesterActivityResponse> getFirstSemesterActivity(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		List<Activity> activities = activityRepository.findAllByUserAndSemester(user, Semester.FIRST_SEMESTER);
+		return activities.stream()
+				.map(activity -> new FirstSemesterActivityResponse(
+						activity.getId(),
+						activity.getActivityName(),
+						activity.getActivityDescription(),
+						activity.getActivityDate()
+				))
+				.toList();
+	}
+
+	public void createActivity(CreateActivityResponse createActivityResponse) {
+		User user = userRepository.findByStudentNumber(createActivityResponse.getStudentNumber())
+				.orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+		Activity newActivity = new Activity();
+		newActivity.setActivityName(createActivityResponse.getName());
+		newActivity.setActivityDescription(createActivityResponse.getDescription());
+		newActivity.setActivityDate(createActivityResponse.getDateTime());
+		newActivity.setSemester(createActivityResponse.getSemester());
+		newActivity.setUser(user);
+		activityRepository.save(newActivity);
+	}
+
+	@Transactional
 	public void deleteActivity1(String studentNumber, Long activityId) {
 		User user = userRepository.findByStudentNumber(studentNumber)
 				.orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
 
-		Activity1 activity = activity1Repository.findByIdAndUser(activityId, user)
+		Activity activity = activityRepository.findByIdAndUser(activityId, user)
 				.orElseThrow(() -> new RuntimeException("해당 유저의 활동이 아닙니다."));
 
-		activity1Repository.delete(activity);
+		activityRepository.delete(activity);
 	}
 
 }
