@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -30,7 +31,7 @@ public class FriendController {
 
 	private final FriendService friendService;
 
-	@PostMapping("/list")
+	@GetMapping("/list")
 	public ResponseEntity<ApiResponse<?>> getFriendList(@RequestBody StudentNumberRequest request) {
 		try {
 			List<FriendResponse> friends = friendService.getFriendsByStudentNumber(request.getStudentNumber());

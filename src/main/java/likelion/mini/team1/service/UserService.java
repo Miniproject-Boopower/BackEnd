@@ -176,8 +176,6 @@ public class UserService {
 		);
 	}
 
-}
-
 	public List<FirstSemesterActivityResponse> getFirstSemesterActivity(String studentNumber) {
 		User user = findUserByStudentNumber(studentNumber);
 		List<Activity> activities = activityRepository.findAllByUserAndSemester(user, Semester.FIRST_SEMESTER);

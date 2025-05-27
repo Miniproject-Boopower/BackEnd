@@ -155,6 +155,8 @@ public class UserController {
 		UserProfileResponse profile = userService.getProfile(studentNumber, major, minor);
 		return ResponseEntity.ok(profile);
 
+	}
+
 	@GetMapping("/activity1/share")
 	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {
 		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
