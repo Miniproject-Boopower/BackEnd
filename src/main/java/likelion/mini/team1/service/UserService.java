@@ -22,6 +22,7 @@ import likelion.mini.team1.repository.UserCourseRepository;
 import likelion.mini.team1.repository.UserRepository;
 import likelion.mini.team1.util.AESUtil;
 import lombok.RequiredArgsConstructor;
+import likelion.mini.team1.domain.dto.UserProfileResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -124,5 +125,21 @@ public class UserService {
 		}).toList();
 		return list;
 	}
+	public UserProfileResponse getProfile(String studentNumber, String major, String minor) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+				.orElseThrow(() -> new RuntimeException("해당 학생 번호의 사용자가 존재하지 않습니다."));
+		return new UserProfileResponse(
+				user.getName(),
+				user.getStudentNumber(),
+				major,
+				minor
+		);
+	}
+
+}
+
+
+
+
 }
 
