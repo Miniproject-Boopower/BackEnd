@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class FirstSemesterActivityResponse {
+    private Long id;
     private String activityName;
     private String description;
     private LocalDateTime date;

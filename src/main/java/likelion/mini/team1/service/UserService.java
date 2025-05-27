@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import jakarta.transaction.Transactional;
 import likelion.mini.team1.domain.dto.request.CreateActivityResponse;
 import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 import likelion.mini.team1.domain.entity.Activity;
@@ -138,6 +139,7 @@ public class UserService {
 		List<Activity> activities = activityRepository.findAllByUserAndSemester(user, Semester.FIRST_SEMESTER);
 		return activities.stream()
 				.map(activity -> new FirstSemesterActivityResponse(
+						activity.getId(),
 						activity.getActivityName(),
 						activity.getActivityDescription(),
 						activity.getActivityDate()
@@ -155,6 +157,17 @@ public class UserService {
 		newActivity.setSemester(createActivityResponse.getSemester());
 		newActivity.setUser(user);
 		activityRepository.save(newActivity);
+	}
+
+	@Transactional
+	public void deleteActivity1(String studentNumber, Long activityId) {
+		User user = userRepository.findByStudentNumber(studentNumber)
+				.orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+
+		Activity activity = activityRepository.findByIdAndUser(activityId, user)
+				.orElseThrow(() -> new RuntimeException("해당 유저의 활동이 아닙니다."));
+
+		activityRepository.delete(activity);
 	}
 
 }
