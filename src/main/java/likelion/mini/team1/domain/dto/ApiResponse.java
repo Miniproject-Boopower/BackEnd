@@ -8,7 +8,8 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class ApiResponse<T> {
-	private int status;
-	private String message;
-	private T data;
+    private int status;
+    private String message;
+    private T data;
+
 }

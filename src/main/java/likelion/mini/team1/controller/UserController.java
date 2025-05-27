@@ -2,23 +2,26 @@ package likelion.mini.team1.controller;
 
 import java.util.List;
 
+import likelion.mini.team1.domain.dto.request.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import likelion.mini.team1.domain.dto.ApiResponse;
-import likelion.mini.team1.domain.dto.request.AddNonRegularCourseRequest;
-import likelion.mini.team1.domain.dto.request.LoginRequest;
-import likelion.mini.team1.domain.dto.request.SignUpRequest;
 import likelion.mini.team1.domain.dto.response.AssignmentDdayResponse;
 import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
+import likelion.mini.team1.domain.dto.response.MypageResponse;
+import likelion.mini.team1.domain.dto.response.ScheduleResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
 
@@ -102,12 +105,12 @@ public class UserController {
 			.build();
 		return ResponseEntity.ok(response);
 	}
-	@PostMapping("/activity1update")
-	public ResponseEntity<?> updateActivity1(@RequestBody UpdateActivity1Request request) {
-		userService.updateActivity1(request);
-		return ResponseEntity.ok("1학기 활동이 성공적으로 수정되었습니다.");
-	}
 
+	@DeleteMapping("/activity1/delete")
+	public ResponseEntity<?> deleteActivity(@RequestParam String studentNumber, @RequestParam Long activityId) {
+		userService.deleteActivity1(studentNumber, activityId);
+		return ResponseEntity.ok("1학기 활동이 삭제되었습니다.");
+	}
 
 	@GetMapping("/main/today/assignment")
 	public ResponseEntity<?> getTodayAssignment(@RequestParam String studentNumber) {
@@ -121,21 +124,69 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/main/today/schedule")
+	public ResponseEntity<?> getTodaySchedule(@RequestParam String studentNumber) {
+		List<ScheduleResponse> todaySchedule = userService.getTodaySchedule(studentNumber);
+		ApiResponse<List<ScheduleResponse>> response = ApiResponse.<List<ScheduleResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
+			.data(todaySchedule)
+			.build();
+
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/main/d-day")
 	public ResponseEntity<?> getDday(@RequestParam String studentNumber) {
 		List<AssignmentDdayResponse> assignmentDday = userService.getAssignmentDday(studentNumber);
 		ApiResponse<List<AssignmentDdayResponse>> response = ApiResponse.<List<AssignmentDdayResponse>>builder()
 			.status(200)
-			.message("오늘 해야할 과제를 조회완료1 하였습니다!!")
+			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
 			.data(assignmentDday)
 			.build();
 		return ResponseEntity.ok(response);
 	}
+
+	@GetMapping("/profile")
+	public ResponseEntity<?> getProfile(@RequestParam String studentNumber, @RequestParam String major,
+										@RequestParam String minor) {
+		MypageResponse profile = userService.getProfile(studentNumber, major, minor);
+		return ResponseEntity.ok(profile);
+
+	}
+
 	@GetMapping("/activity1/share")
 	public ResponseEntity<?> shareFirstSemesterActivities(@RequestParam String studentNumber) {
-		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivities(studentNumber);
+		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
 		return ResponseEntity.ok(activities);
 	}
 
+	@PutMapping("/fix-activity1")
+	public ResponseEntity<?> fixActivity(@RequestBody FixActivityRequest fixActivityRequest) {
+		userService.fixActivity(fixActivityRequest);
+		return ResponseEntity.ok("수정이 완료되었습니다.");
+	}
 
+	@GetMapping("/check-activity1")
+	public ResponseEntity<?> checkFirstSemesterActivities(@RequestParam String studentNumber) {
+		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivity(studentNumber);
+		return ResponseEntity.ok(activities);
+	}
+
+	@PostMapping("/createActivity")
+	public ResponseEntity<?> createActivity(@RequestBody CreateActivityResponse createActivityResponse) {
+		userService.createActivity(createActivityResponse);
+		return null;
+	}
+
+	@PostMapping("/createSchedule")
+	public ResponseEntity<?> createSchedule(@RequestBody CreateScheduleRequest createScheduleRequest) {
+		userService.createSchedule(createScheduleRequest);
+		ApiResponse<List<AssignmentDdayResponse>> response = ApiResponse.<List<AssignmentDdayResponse>>builder()
+			.status(200)
+			.message("오늘 해야할 과제를 조회완료1 하였습니다!!")
+			.data(null)
+			.build();
+		return ResponseEntity.ok(response);
+	}
 }
