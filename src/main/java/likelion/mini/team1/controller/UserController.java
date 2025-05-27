@@ -2,6 +2,7 @@ package likelion.mini.team1.controller;
 
 import java.util.List;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import likelion.mini.team1.domain.dto.response.AssignmentResponse;
 import likelion.mini.team1.domain.dto.response.CourseResponse;
 import likelion.mini.team1.service.UserService;
 import lombok.RequiredArgsConstructor;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -130,6 +132,13 @@ public class UserController {
 		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivities(studentNumber);
 		return ResponseEntity.ok(activities);
 	}
+	@GetMapping("/check-activity1")
+	public ResponseEntity<?> checkFirstSemesterActivities(@RequestParam String studentNumber) {
+		List<FirstSemesterActivityResponse> activities = userService.getFirstSemesterActivities(studentNumber);
+		return ResponseEntity.ok(activities);
+	}
+
+
 
 
 }

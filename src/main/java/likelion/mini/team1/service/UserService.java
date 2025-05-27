@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import likelion.mini.team1.domain.dto.FirstSemesterActivityResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import likelion.mini.team1.repository.UserCourseRepository;
 import likelion.mini.team1.repository.UserRepository;
 import likelion.mini.team1.util.AESUtil;
 import lombok.RequiredArgsConstructor;
+import likelion.mini.team1.domain.dto.response.FirstSemesterActivityResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -124,5 +126,20 @@ public class UserService {
 		}).toList();
 		return list;
 	}
+
+	public List<FirstSemesterActivityResponse> getFirstSemesterActivity(String studentNumber) {
+		User user = findUserByStudentNumber(studentNumber);
+		List<Activity> activities = activityRepository.findAllByUserAndSemester(user, "1학기");
+		return activities.stream()
+				.map(activity -> new FirstSemesterActivityResponse(
+						activity.getActivityName(),
+						activity.getDescription(),
+						activity.getDate()
+				))
+				.toList();
+	}
+
+
+
 }
 
