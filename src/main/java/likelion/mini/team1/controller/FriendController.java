@@ -113,7 +113,7 @@ public class FriendController {
 		}
 	}
 
-	@PostMapping("/delete")
+	@DeleteMapping("/delete")
 	public ResponseEntity<ApiResponse> deleteFriend(@RequestBody FriendDeleteRequest request) {
 		try {
 			friendService.deleteFriend(request);
