@@ -134,9 +134,7 @@ public class UserService {
 
 	public List<ScheduleResponse> getTodaySchedule(String studentNumber) {
 		User user = findUserByStudentNumber(studentNumber);
-		LocalDateTime start = LocalDate.now().atStartOfDay();
-		LocalDateTime end = LocalDate.now().atStartOfDay().plusDays(1);
-		return scheduleRepository.findAllByUserAndDateAfterAndDateBefore(user, start, end)
+		return scheduleRepository.findAllByUserAndDate(user, LocalDate.now())
 			.stream()
 			.map(schedule -> ScheduleResponse.builder()
 				.id(schedule.getId())

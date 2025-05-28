@@ -129,7 +129,7 @@ public class UserController {
 		List<ScheduleResponse> todaySchedule = userService.getTodaySchedule(studentNumber);
 		ApiResponse<List<ScheduleResponse>> response = ApiResponse.<List<ScheduleResponse>>builder()
 			.status(200)
-			.message("오늘 해야할 과제를 조회완료 하였습니다!!")
+			.message("오늘 해야할 할일을 조회완료 하였습니다!!")
 			.data(todaySchedule)
 			.build();
 
